@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador de Transferencia SX · Faena A</title>
+<style>
+:root{--bg:#0b161f;--bg2:#101f2b;--panel:#13242f;--panel2:#183040;--line:#24394a;--tx:#e9eff3;--mu:#8ea3b1;--cu:#e8893c;--cu2:#ffb26b;--sp:#4fc3f7;--pp:#b79cff;--ok:#38d9a0;--wa:#f3b94a;--bad:#ff5d5d;--r:16px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(1200px 600px at 85% -10%,#1b3a4d 0%,transparent 60%),radial-gradient(900px 500px at -10% 110%,#3a2616 0%,transparent 55%),var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 16px 40px}
+header{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.brand small{display:block;color:var(--cu2);letter-spacing:.18em;font-size:11px;font-weight:700;text-transform:uppercase}
+h1{margin:4px 0 0;font-size:clamp(22px,3.2vw,34px);line-height:1.1;font-weight:800;letter-spacing:-.01em}
+h1 span{background:linear-gradient(90deg,var(--cu),var(--cu2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{all:unset;cursor:pointer;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--mu);transition:.2s}
+.seg button.on{background:linear-gradient(135deg,var(--cu),#c96d22);color:#fff;box-shadow:0 4px 14px #e8893c55}
+.btn{all:unset;cursor:pointer;padding:9px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--tx);transition:.2s}
+.btn:hover{border-color:var(--cu);color:var(--cu2)}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h2{margin:0 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);font-weight:700;display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.var{padding:12px 0;border-top:1px solid var(--line)}
+.var:first-of-type{border-top:0}
+.vh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.vn{font-weight:600}.vn i{font-style:normal;color:var(--cu2);margin-right:6px;font-weight:800}
+.vu{color:var(--mu);font-size:12px}
+.inp{display:flex;align-items:center;gap:8px}
+.inp input[type=number]{width:104px;background:#0b1821;border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:7px 9px;font:600 15px/1 ui-monospace,Menlo,Consolas,monospace;text-align:right}
+.inp input[type=number]:focus{outline:2px solid var(--cu);border-color:transparent}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;min-width:74px;text-align:center}
+.b-ok{background:#38d9a022;color:var(--ok)}.b-wa{background:#f3b94a22;color:var(--wa)}.b-bad{background:#ff5d5d22;color:var(--bad)}
+.rb{position:relative;height:30px}
+.track{position:absolute;left:0;right:0;top:11px;height:8px;border-radius:8px;overflow:hidden;display:flex}
+.track span{display:block;height:100%}
+.med{position:absolute;top:5px;width:2px;height:20px;background:#ffffff66;border-radius:2px}
+.mk{position:absolute;top:2px;width:0;height:0;transform:translateX(-50%);transition:left .15s}
+.mk::after{content:"";position:absolute;left:-8px;top:0;width:16px;height:26px;border-radius:8px;background:#fff;box-shadow:0 0 0 3px var(--c,#fff),0 4px 12px #0008;opacity:.97}
+input[type=range]{position:absolute;left:0;right:0;top:0;width:100%;height:30px;opacity:0;cursor:pointer;margin:0}
+.lims{display:flex;justify-content:space-between;color:var(--mu);font-size:11px;margin-top:2px}
+.cmaxrow{display:flex;gap:8px;align-items:center;color:var(--mu);font-size:12px;margin-top:6px}
+.cmaxrow input{accent-color:var(--cu)}
+.sec{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cu2);margin:18px 0 2px;display:flex;align-items:center;gap:8px}
+.sec:first-of-type{margin-top:0}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.banner{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:14px;margin-bottom:14px;border:1px solid;transition:.25s}
+.banner .ic{font-size:22px}.banner b{display:block;font-size:15px}.banner span{font-size:13px;color:var(--mu)}
+.bn-ok{border-color:#38d9a066;background:linear-gradient(90deg,#38d9a01c,transparent)}
+.bn-wa{border-color:#f3b94a66;background:linear-gradient(90deg,#f3b94a1c,transparent)}
+.bn-bad{border-color:#ff5d5d77;background:linear-gradient(90deg,#ff5d5d22,transparent)}
+.g3{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gauge{position:relative;text-align:center}
+.gauge svg{width:100%;height:auto;display:block}
+.gv{position:absolute;left:0;right:0;text-align:center}
+.gv .num{font-weight:800;letter-spacing:-.02em;line-height:1}
+.gv .unit{color:var(--mu);font-size:12px}
+.gl{font-weight:700;font-size:13px;margin-top:2px}
+.sub{font-size:12px;color:var(--mu)}
+.dl{font-weight:700}.up{color:var(--ok)}.dn{color:var(--bad)}
+.main .num{font-size:clamp(44px,6vw,64px)}
+.main .gv{top:46%}
+.small .num{font-size:30px}.small .gv{top:40%}
+.pm{margin-top:4px}
+select{background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:600 13px system-ui}
+.curvehead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mu);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+#curve{width:100%;height:auto;display:block}
+.foot{margin-top:22px;color:var(--mu);font-size:12px;line-height:1.6}
+.foot code{background:#0b1821;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--cu2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.stat{background:#0b1821;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:12px;color:var(--mu);font-weight:600}.stat span{font-weight:800;font-size:16px}
+.pill{display:inline-block;margin-left:8px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e8893c22;color:var(--cu2);vertical-align:middle}
+@media(max-width:520px){.g3{grid-template-columns:1fr}.stats{grid-template-columns:1fr}}
+.topnav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}.topnav a{color:var(--mu);text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg2)}.topnav a.on{background:linear-gradient(135deg,var(--cu),#c96d22);color:#fff;border-color:transparent}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="topnav"><a href="https://nicolasperezgonzalo.github.io/Simulador_Transferencia_LB/" class="on">Simulador</a><a href="https://nicolasperezgonzalo.github.io/Dashboard_Control/">Dashboard de control</a><a href="https://nicolasperezgonzalo.github.io/Checklist_LB/">Checklist de turno</a></nav>
+<header>
+  <div class="brand"><small>Lean Six Sigma · Fase Mejorar</small><h1>Simulador de <span>transferencia neta de cobre</span></h1><div class="sub" style="margin-top:6px">Planta SX – Faena A · modelos de regresión múltiple finales (Test N°2) con alertas de límites de operación</div></div>
+  <div class="ctrl">
+    <button class="btn" id="btnMed">Valores típicos</button>
+    <button class="btn" id="btnMax">Escenario exigente</button>
+  </div>
+</header>
+<div class="grid">
+  <section class="card" id="inputs"><h2><span class="dot" style="background:var(--cu)"></span>Variables de operación</h2></section>
+  <section>
+    <div id="banner" class="banner bn-ok"></div>
+    <div class="card" style="margin-bottom:18px">
+      <h2><span class="dot" style="background:var(--ok)"></span>Transferencia estimada</h2>
+      <div class="gauge main" id="gG"></div>
+      <div class="g3" style="margin-top:6px"><div class="gauge small" id="gSP"></div><div class="gauge small" id="gP"></div></div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="card">
+      <div class="curvehead"><h2 style="margin:0"><span class="dot" style="background:var(--pp)"></span>Curva de respuesta</h2>
+        <div class="inp"><span class="sub">Variar:</span><select id="sweep"></select></div></div>
+      <svg id="curve" viewBox="0 0 560 270"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+</div>
+<div class="foot">
+  <b>Cómo leer las alertas.</b> <span style="color:var(--ok)">Verde</span>: valor dentro del rango habitual (percentil 5 a 95 de los días limpios). <span style="color:var(--wa)">Amarillo</span>: dentro de lo observado pero en los extremos. <span style="color:var(--bad)">Rojo</span>: fuera de todo lo observado; el modelo no fue entrenado ahí y la estimación es una extrapolación.<br>
+  <b>Cmax</b> es un valor calculado: extractante × 0,561 (factor vigente desde noviembre 2022). Se recalcula solo; desmarca la casilla para ingresarlo a mano. <b>Límites de extractante y Cmax:</b> se calculan con los días de la operación actual (desde septiembre 2023), que trabaja con más extractante; el resto de las variables usa todos los días limpios.<br>
+  <b>Modelos:</b> regresión lineal múltiple ajustada con días de entrenamiento y validada con días de prueba (<span id="mi"></span>). La banda ± es el RMSE en datos de prueba. Los límites de extractante y Cmax se basan en pocos días (<span id="ns"></span>), por lo que son menos robustos. Datos: <code>data.json</code> embebido en este archivo.
+</div>
+</div>
+<script>
+const DATA={"limits": {"unico": {"n": 2206, "n_gh": 88, "A": {"min": 1888.52716728052, "p5": 2026.7897107402475, "med": 2165.97574869792, "p95": 2301.0312500000027, "max": 2387.83333333333}, "B": {"min": 3443.40738932292, "p5": 3598.322835286455, "med": 4036.0, "p95": 4273.489583333332, "max": 4356.61246744792}, "C": {"min": 1.02249995867411, "p5": 1.24750000238419, "med": 1.655226767188165, "p95": 2.0107900591199774, "max": 2.29999995231628}, "D": {"min": 1.91166669130325, "p5": 2.035104133188725, "med": 2.2997533121888747, "p95": 2.5174999833107, "max": 2.67833340167999}, "E": {"min": 0.855833341677984, "p5": 0.9903125092387198, "med": 1.38541665673256, "p95": 1.8345833644270901, "max": 2.11291667819023}, "F": {"min": 1.7462500333786, "p5": 1.9479166964689851, "med": 2.23041668534279, "p95": 2.430000066757205, "max": 2.60749998688698}, "G": {"min": 14.0166666507721, "p5": 14.19499981403347, "med": 15.59166701634725, "p95": 16.5387501478195, "max": 16.883333047231}, "H": {"min": 24.9851455450483, "p5": 25.30302997153919, "med": 27.79263282771345, "p95": 29.4808380531542, "max": 30.0950678203762}, "I": {"min": 949.16650390625, "p5": 1051.8142700195326, "med": 1282.3734537760402, "p95": 1344.85237630208, "max": 1404.64518229167}, "T": {"G": {"med": 200.68948759390702, "min": 129.552084101342, "max": 247.279202790788}, "SP": {"med": 82.01923359856664, "min": 49.5124342660478, "max": 119.744173123832}, "P": {"med": 117.926965198624, "min": 77.6896900601885, "max": 145.430838409524}}}}, "models": {"G": {"name": "Global", "y": "TG", "xs": ["A", "B", "C", "D", "E", "F", "G", "H", "I"], "const": -292.17395910499664, "coef": {"A": 0.03955413491730235, "B": 0.03752038394706772, "C": 32.09993842168077, "D": 7.872378975659831, "E": 63.27879308786459, "F": 11.826283681514298, "G": 1.072201337957823, "H": 1.5004580962825589, "I": 0.01783055781495676}, "rmse": 4.137110101368451, "r2": 0.9661344333775197, "mape": 1.655263125193904, "r2tr": 0.9582287859920184}, "SP": {"name": "Serie-Paralelo", "y": "TSP", "xs": ["A", "C", "D", "G", "H", "I"], "const": -92.90123917352332, "coef": {"A": 0.04083508878622884, "C": 47.82684742376115, "D": 2.325870310046977, "G": -0.11066262203103569, "H": 0.16747376416406481, "I": 0.00021337012507199275}, "rmse": 0.8937564515749189, "r2": 0.9942803990942605, "mape": 0.8863658852821285, "r2tr": 0.9911895855260197}, "P": {"name": "Paralelo", "y": "TP", "xs": ["B", "E", "F", "G", "H", "I"], "const": -211.17035102128898, "coef": {"B": 0.033784663682412, "E": 54.46882836227463, "F": 26.193589123781592, "G": 3.2178386259421874, "H": -0.15529006509167276, "I": 0.019365069947281884}, "rmse": 4.486859752423967, "r2": 0.9258434348545965, "mape": 3.0919755594204235, "r2tr": 0.9223258011994049}}};
+const META={A:{n:'Flujo PLS serie-paralelo',u:'m³/h',st:5,d:0,c:'sp'},C:{n:'Cu en PLS serie-paralelo',u:'g/L',st:.01,d:2,c:'sp'},D:{n:'pH PLS serie-paralelo',u:'',st:.01,d:2,c:'sp'},
+ B:{n:'Flujo PLS paralelo',u:'m³/h',st:5,d:0,c:'pp'},E:{n:'Cu en PLS paralelo',u:'g/L',st:.01,d:2,c:'pp'},F:{n:'pH PLS paralelo',u:'',st:.01,d:2,c:'pp'},
+ G:{n:'Cmax (capacidad máx. de carga)',u:'g/L',st:.05,d:2,c:'or'},H:{n:'Extractante',u:'% v/v',st:.1,d:1,c:'or'},I:{n:'Flujo de orgánico',u:'m³/h',st:5,d:0,c:'or'}};
+const GROUPS=[['Circuito serie-paralelo · Heap','var(--sp)',['A','C','D']],['Circuito paralelo · ROM','var(--pp)',['B','E','F']],['Orgánico común','var(--cu)',['G','H','I']]];
+const PERN={unico:'Operación'};
+const FACT={unico:0.561};
+const COL={G:'#e8893c',SP:'#4fc3f7',P:'#b79cff'};
+const f=(x,d=1)=>x.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d});
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const state={per:'unico',auto:true,v:{}};
+function calc(k,v){const m=DATA.models[k];let s=m.const;for(const x of m.xs)s+=m.coef[x]*v[x];return s}
+window.simCalc=calc;
+function axis(v){const L=DATA.limits[state.per][v];const pad=.18*(L.max-L.min);return[L.min-pad,L.max+pad]}
+function zone(v,x){const L=DATA.limits[state.per][v];if(x<L.min||x>L.max)return 2;if(x<L.p5||x>L.p95)return 1;return 0}
+const ZC=['var(--ok)','var(--wa)','var(--bad)'],ZB=['b-ok','b-wa','b-bad'],ZT=['En rango','Extremo','Fuera de rango'];
+// build UI
+const inEl=document.getElementById('inputs');
+const rows={};
+GROUPS.forEach(([t,c,vs])=>{const h=document.createElement('div');h.className='sec';h.innerHTML=`<span class="dot" style="background:${c}"></span>${t}`;inEl.appendChild(h);
+ vs.forEach(v=>{const M=META[v];const d=document.createElement('div');d.className='var';
+  d.innerHTML=`<div class="vh"><div><span class="vn"><i>${v}</i>${M.n}</span> <span class="vu">${M.u}</span></div><div class="inp"><input type="number" step="${M.st}" id="n${v}"><span class="badge" id="b${v}"></span></div></div>
+  <div class="rb"><div class="track" id="t${v}"></div><div class="med" id="m${v}"></div><div class="mk" id="k${v}"></div><input type="range" id="r${v}" step="${M.st}"></div>
+  <div class="lims"><span id="l0${v}"></span><span id="l1${v}"></span></div>`+(v==='G'?`<div class="cmaxrow"><input type="checkbox" id="auto" checked><label for="auto">Calcular Cmax = extractante × <b id="fac"></b></label></div>`:'');
+  inEl.appendChild(d);rows[v]=1})});
+function paintTracks(){for(const v in META){const L=DATA.limits[state.per][v],[a,b]=axis(v),w=b-a;const seg=[[a,L.min,'var(--bad)'],[L.min,L.p5,'var(--wa)'],[L.p5,L.p95,'var(--ok)'],[L.p95,L.max,'var(--wa)'],[L.max,b,'var(--bad)']];
+ document.getElementById('t'+v).innerHTML=seg.map(s=>`<span style="width:${(s[1]-s[0])/w*100}%;background:${s[2]};opacity:.78"></span>`).join('');
+ document.getElementById('m'+v).style.left=((L.med-a)/w*100)+'%';
+ const r=document.getElementById('r'+v);r.min=a;r.max=b;
+ document.getElementById('l0'+v).textContent=`habitual ${f(L.p5,META[v].d)} – ${f(L.p95,META[v].d)}`;document.getElementById('l1'+v).textContent=`observado ${f(L.min,META[v].d)} – ${f(L.max,META[v].d)}`}}
+function setTypical(){const L=DATA.limits[state.per];for(const v in META)state.v[v]=L[v].med;if(state.auto)state.v.G=FACT[state.per]*state.v.H;update(true)}
+function setHard(){const L=DATA.limits[state.per];for(const v in META)state.v[v]=L[v].p95;state.v.H=L.H.p95;if(state.auto)state.v.G=FACT[state.per]*state.v.H;update(true)}
+document.getElementById('btnMed').onclick=setTypical;document.getElementById('btnMax').onclick=setHard;
+for(const v in META){const n=document.getElementById('n'+v),r=document.getElementById('r'+v);
+ const set=x=>{if(isNaN(x))return;state.v[v]=x;if(v==='H'&&state.auto)state.v.G=FACT[state.per]*x;if(v==='G'){state.auto=false;document.getElementById('auto').checked=false}update(false,v)};
+ n.oninput=()=>set(parseFloat(n.value));r.oninput=()=>set(parseFloat(r.value))}
+document.getElementById('auto').onchange=e=>{state.auto=e.target.checked;if(state.auto)state.v.G=FACT[state.per]*state.v.H;update(false)};
+// gauges
+function gaugeHTML(id,k,big){const m=DATA.models[k];return `<svg viewBox="0 0 240 ${big?150:140}"><defs><linearGradient id="gr${k}" x1="0" x2="1"><stop offset="0" stop-color="${COL[k]}" stop-opacity=".55"/><stop offset="1" stop-color="${COL[k]}"/></linearGradient></defs>
+<path d="M30 120 A90 90 0 0 1 210 120" fill="none" stroke="#223645" stroke-width="16" stroke-linecap="round"/>
+<path id="${id}arc" d="M30 120 A90 90 0 0 1 210 120" fill="none" stroke="url(#gr${k})" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 999"/>
+<line id="${id}med" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+</svg><div class="gv"><div class="num" id="${id}v">0</div><div class="unit">t/d</div></div><div class="gl" style="color:${COL[k]}">${m.name}</div><div class="sub" id="${id}s"></div>`}
+const GID={G:'gG',SP:'gSP',P:'gP'};
+['G','SP','P'].forEach(k=>document.getElementById(GID[k]).innerHTML=gaugeHTML(GID[k],k,k==='G'));
+const ARC=Math.PI*90;const cur={G:0,SP:0,P:0},tgt={};
+function pt(frac,r){const a=Math.PI*(1-frac);return[120+r*Math.cos(a),120-r*Math.sin(a)]}
+function paintGauge(k){const id=GID[k],L=DATA.limits[state.per].T[k],mx=L.max*1.12,val=cur[k];
+ document.getElementById(id+'arc').setAttribute('stroke-dasharray',`${clamp(val/mx,0,1)*ARC} 999`);
+ document.getElementById(id+'v').textContent=f(val,1);
+ const [x1,y1]=pt(L.med/mx,80),[x2,y2]=pt(L.med/mx,100),ln=document.getElementById(id+'med');ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);ln.setAttribute('x2',x2);ln.setAttribute('y2',y2)}
+function animate(){let busy=false;for(const k of ['G','SP','P']){const d=tgt[k]-cur[k];if(Math.abs(d)>.02){cur[k]+=d*.2;busy=true}else cur[k]=tgt[k];paintGauge(k)}if(busy)requestAnimationFrame(animate)}
+function update(syncAll,only){
+ const L=DATA.limits[state.per];
+ document.getElementById('fac').textContent=f(FACT[state.per],4);
+ document.getElementById('auto').checked=state.auto;
+ if(syncAll!==undefined&&(syncAll||only===undefined))paintTracks();
+ let worst=0,bad=[],warn=[];
+ for(const v in META){const x=state.v[v],M=META[v],[a,b]=axis(v);
+  const n=document.getElementById('n'+v);if(only!==v)n.value=x.toFixed(M.d+(M.st<1?0:0));
+  document.getElementById('r'+v).value=x;
+  const z=zone(v,x);worst=Math.max(worst,z);if(z===2)bad.push(v);else if(z===1)warn.push(v);
+  const mk=document.getElementById('k'+v);mk.style.left=(clamp((x-a)/(b-a),0,1)*100)+'%';mk.style.setProperty('--c',ZC[z]);
+  const bd=document.getElementById('b'+v);bd.className='badge '+ZB[z];bd.textContent=ZT[z]}
+ const P=state.per;
+ for(const k of ['G','SP','P']){tgt[k]=calc(k,state.v);const tv=Object.fromEntries(Object.keys(META).map(v=>[v,L[v].med]));if(state.auto)tv.G=FACT[P]*tv.H;const base=calc(k,tv);
+  const d=tgt[k]-base,m=DATA.models[k];
+  document.getElementById(GID[k]+'s').innerHTML=`± ${f(m.rmse,1)} t/d · <span class="dl ${d>=0?'up':'dn'}">${d>=0?'▲':'▼'} ${f(Math.abs(d),1)}</span> vs. típico`}
+ animate();
+ const bn=document.getElementById('banner');
+ if(worst===2){bn.className='banner bn-bad';bn.innerHTML=`<div class="ic">⛔</div><div><b>Extrapolación: ${bad.length} variable${bad.length>1?'s':''} fuera de lo observado (${bad.join(', ')})</b><span>El modelo no se entrenó en estos valores; tome la estimación con cautela.</span></div>`}
+ else if(worst===1){bn.className='banner bn-wa';bn.innerHTML=`<div class="ic">⚠️</div><div><b>Atención: ${warn.length} variable${warn.length>1?'s':''} en el extremo del rango (${warn.join(', ')})</b><span>Dentro de lo observado, pero fuera del rango habitual.</span></div>`}
+ else{bn.className='banner bn-ok';bn.innerHTML=`<div class="ic">✅</div><div><b>Operación dentro del rango habitual</b><span>Las nueve variables están dentro de lo normal de la operación.</span></div>`}
+ const sum=tgt.SP+tgt.P;
+ document.getElementById('stats').innerHTML=`<div class="stat"><b>Suma S/P + P</b><span>${f(sum,1)} t/d</span></div><div class="stat"><b>Diferencia vs. global</b><span>${f(sum-tgt.G,1)} t/d</span></div><div class="stat"><b>Días de la base</b><span>${f(L.n,0)}</span></div>`;
+ curve();
+}
+// response curve
+const sw=document.getElementById('sweep');sw.innerHTML=Object.keys(META).map(v=>`<option value="${v}">${v} · ${META[v].n}</option>`).join('');sw.value='H';sw.onchange=()=>curve();
+document.getElementById('legend').innerHTML=['G','SP','P'].map(k=>`<span><i style="background:${COL[k]}"></i>${DATA.models[k].name}</span>`).join('');
+function curve(){const v=sw.value,[a,b]=axis(v),Lm=DATA.limits[state.per][v],W=560,H=270,pl=44,pr=12,pt_=14,pb=34;
+ const ks=['G','SP','P'].filter(k=>DATA.models[k].xs.includes(v));
+ const X=x=>pl+(x-a)/(b-a)*(W-pl-pr);
+ const N=40,ser={};let ymin=1e9,ymax=-1e9;
+ ks.forEach(k=>{ser[k]=[];for(let i=0;i<=N;i++){const x=a+(b-a)*i/N,vv={...state.v,[v]:x};if(v==='H'&&state.auto)vv.G=FACT[state.per]*x;const y=calc(k,vv);ser[k].push([x,y]);ymin=Math.min(ymin,y);ymax=Math.max(ymax,y)}});
+ const pad=(ymax-ymin)*.12||1;ymin-=pad;ymax+=pad;const Y=y=>pt_+(1-(y-ymin)/(ymax-ymin))*(H-pt_-pb);
+ let s=`<rect x="${X(a)}" y="${pt_}" width="${X(Lm.min)-X(a)}" height="${H-pt_-pb}" fill="#ff5d5d" opacity=".10"/><rect x="${X(Lm.max)}" y="${pt_}" width="${X(b)-X(Lm.max)}" height="${H-pt_-pb}" fill="#ff5d5d" opacity=".10"/><rect x="${X(Lm.p5)}" y="${pt_}" width="${X(Lm.p95)-X(Lm.p5)}" height="${H-pt_-pb}" fill="#38d9a0" opacity=".10"/>`;
+ for(let i=0;i<=4;i++){const y=ymin+(ymax-ymin)*i/4;s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(y)}" y2="${Y(y)}" stroke="#24394a"/><text x="${pl-6}" y="${Y(y)+4}" text-anchor="end" fill="#8ea3b1" font-size="11">${f(y,0)}</text>`}
+ for(let i=0;i<=4;i++){const x=a+(b-a)*i/4;s+=`<text x="${X(x)}" y="${H-12}" text-anchor="middle" fill="#8ea3b1" font-size="11">${f(x,META[v].d)}</text>`}
+ ks.forEach(k=>{s+=`<path d="${ser[k].map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('')}" fill="none" stroke="${COL[k]}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const xc=clamp(state.v[v],a,b),yc=calc(k,state.v);s+=`<circle cx="${X(xc)}" cy="${Y(yc)}" r="6" fill="${COL[k]}" stroke="#fff" stroke-width="2"/>`});
+ s+=`<line x1="${X(clamp(state.v[v],a,b))}" x2="${X(clamp(state.v[v],a,b))}" y1="${pt_}" y2="${H-pb}" stroke="#fff" stroke-opacity=".35" stroke-dasharray="4 4"/>`;
+ s+=`<text x="${W/2}" y="${H-1}" text-anchor="middle" fill="#8ea3b1" font-size="11">${v} · ${META[v].n} ${META[v].u?'('+META[v].u+')':''}${v==='H'&&state.auto?' · Cmax acompaña':''}</text>`;
+ s+=`<text x="12" y="${H/2}" fill="#8ea3b1" font-size="11" transform="rotate(-90 12 ${H/2})" text-anchor="middle">t/d</text>`;
+ document.getElementById('curve').innerHTML=s}
+const m=DATA.models;document.getElementById('mi').textContent=`R² de prueba: global ${f(m.G.r2,3)}, serie-paralelo ${f(m.SP.r2,3)}, paralelo ${f(m.P.r2,3)}`;
+document.getElementById('ns').textContent=`${DATA.limits.unico.n_gh} días`;
+paintTracks();setTypical();
+</script>
+</body>
+</html>
